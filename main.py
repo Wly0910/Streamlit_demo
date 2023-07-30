@@ -1,74 +1,68 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 from PIL import Image
+import utils
 import os
 import style2
 import nibabel as nib
 import io
 
-st.title('PyTorch Style Transfer')
+st.title('Brain Tumor Segmentation')
 
+# select MRI pattern
 pattern_name = st.sidebar.selectbox(
     'Select Your MRI',
     ('t1', 't1ce', 'flair', 't2')
 )
 
-style_name = st.sidebar.selectbox(
+# select model
+model_name = st.sidebar.selectbox(
     'Select Model',
     tuple(os.listdir("./saved_models"))
 )
 
+# select patient
 patient_name = st.sidebar.selectbox(
-    'Select Style',
+    'Select Patient',
     tuple(os.listdir("./data"))
 )
 
-table1, table2 = st.tabs(["old", "new"])
+# select patient
+result_name = st.sidebar.selectbox(
+    'Result',
+    tuple(os.listdir("./outputs"))
+)
 
-model = "./saved_models/" + style_name
-
+# set path
 input_image = os.path.join(
     "./",
     "data/" + patient_name + "/" + patient_name + "_" + pattern_name + ".nii.gz",
 )
-
 output_image = os.path.join(
     "./",
     "outputs/" + "out" + patient_name + ".nii.gz",
 )
+model = "./saved_models/" + model_name
 
-with table1:
-    clicked1 = st.sidebar.button('Show your data')
-    num = st.slider("num", 1, 155)
+
+# set tabs
+tab1, tab2 = st.tabs(["Original", "Result"])
+
+
+with tab1:
+    clicked1 = st.sidebar.button('upload your data')
     if clicked1:
-        # st.write('### Your orginal image')
-        img = nib.load(input_image).get_fdata()
-        fig, ax = plt.subplots()
-        ax.imshow(img[:, :, num - 1], cmap='gray')
-        ax.axis('off')
+        st.file_uploader("choose your flie")
+    num = st.slider("num", 1, 155)
+    utils.show_image(input_image, num)
 
-        # 将matplotlib figure对象转换为PIL Image对象
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
-        buf.seek(0)
-        img = Image.open(buf)
-        st.image(img, width=512)
-        # buf.close()
-
-with table2:
-    clicked = st.button('Analysis')
-
+with tab2:
+    clicked = st.sidebar.button('Analysis')
+    num_1 = st.slider("num2", 1, 155)
+    try:
+        utils.show_result(input_image, output_image, num_1)
+    except RuntimeError:
+        st.warning('No exit result!  Please analysis first!')
     if clicked:
         model = style2.load_model(model)
         style2.segmentation(model, patient_name)
-        # st.write('### Your Result')
-        img = nib.load(output_image).get_fdata()
-        fig, ax = plt.subplots()
-        ax.imshow(img[:, :, 78], cmap='gray')
-        ax.axis('off')
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png')
-        buf.seek(1)
-        img = Image.open(buf)
-        st.image(img, width=1024)
-        buf.close()

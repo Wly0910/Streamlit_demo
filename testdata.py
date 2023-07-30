@@ -1,19 +1,6 @@
 import os
-import shutil
-import matplotlib.pyplot as plt
-import numpy as np
-import nibabel as nib
-from monai.inferers import sliding_window_inference
 from monai import transforms
-from monai.config import print_config
-from monai.metrics import DiceMetric
-from monai.utils.enums import MetricReduction
-from monai.networks.nets import SwinUNETR
 from monai import data
-from monai.data import decollate_batch
-from functools import partial
-
-import torch
 
 
 def get_testloader(patient_name):

@@ -1,15 +1,7 @@
-import argparse
-import os
-import sys
-import time
-import re
+
 import nibabel as nib
 import numpy as np
 import torch
-from torch.optim import Adam
-from torch.utils.data import DataLoader
-from torchvision import datasets
-from torchvision import transforms
 import torch.onnx
 from monai.networks.nets import SwinUNETR
 from functools import partial
@@ -17,6 +9,7 @@ import utils
 import streamlit as st
 from monai.inferers import sliding_window_inference
 import testdata
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 

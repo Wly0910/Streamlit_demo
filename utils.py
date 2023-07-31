@@ -42,5 +42,3 @@ def show_result(input_image, output_image, num):
     img = Image.open(buf)
     st.image(img, width=512)
     buf.close()
-
-

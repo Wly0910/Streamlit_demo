@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import utils
 import os
-import style2
+import cache
 import nibabel as nib
 import io
 
@@ -64,5 +64,5 @@ with tab2:
     except RuntimeError:
         st.warning('No exit result!  Please analysis first!')
     if clicked:
-        model = style2.load_model(model)
-        style2.segmentation(model, patient_name)
+        model = cache.load_model(model)
+        cache.segmentation(model, patient_name)
